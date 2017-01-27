@@ -21,18 +21,21 @@
  */
 function widget_password_required( $instance ) {
 
-	if ( empty( $instance['password'] ) )
+	if ( empty( $instance['password'] ) ) {
 		return false;
+	}
 
-	if ( ! isset( $_COOKIE['wp-postpass_' . COOKIEHASH] ) )
+	if ( ! isset( $_COOKIE['wp-postpass_' . COOKIEHASH] ) ) {
 		return true;
+	}
 
 	require_once ABSPATH . 'wp-includes/class-phpass.php';
 	$hasher = new PasswordHash( 8, true );
 
 	$hash = wp_unslash( $_COOKIE[ 'wp-postpass_' . COOKIEHASH ] );
-	if ( 0 !== strpos( $hash, '$P$B' ) )
+	if ( 0 !== strpos( $hash, '$P$B' ) ) {
 		return true;
+	}
 
 	return ! $hasher->CheckPassword( $instance['password'], $hash );
 }
@@ -46,12 +49,11 @@ function widget_password_required( $instance ) {
  * @return string HTML content for password form for password protected post.
  */
 function ppw_get_the_password_form( $widget_id ) {
-	$label = 'pwbox-' . ( empty($widget_id) ? rand() : $widget_id );
-	$output = '<form action="' . esc_url( site_url( 'wp-login.php?action=postpass', 'login_post' ) ) . '" class="post-password-form" method="post">
-	<!--<p>' . __( 'This content is password protected. To view it please enter your password below:' ) . '</p>-->
-	<p><label for="' . $label . '">' . __( 'Password:' ) . ' <input name="post_password" id="' . $label . '" type="password" size="20" /></label> <input type="submit" name="Submit" value="' . esc_attr__( 'Submit' ) . '" /></p>
-	</form>
-	';
+	$label  = 'pwbox-' . ( empty( $widget_id ) ? rand() : $widget_id );
+	$output = '<form action="' . esc_url( site_url( 'wp-login.php?action=postpass', 'login_post' ) ) . '" class="post-password-form" method="post">'.
+		'<p><label for="' . $label . '">' . __( 'Password:' ) . ' <input name="post_password" id="' . $label . '" type="password" size="20" /></label>'.
+		'<input type="submit" name="Submit" value="' . esc_attr__( 'Submit' ) . '" /></p>'.
+	'</form>';
 	return apply_filters( 'the_password_form', $output );
 }
 
